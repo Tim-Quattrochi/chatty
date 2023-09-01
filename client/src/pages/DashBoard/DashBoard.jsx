@@ -1,43 +1,42 @@
 import { useEffect, useState } from "react";
+import useGetRooms from "../../hooks/useGetRooms";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useNavigate } from "react-router-dom";
 import useAuthContext from "../../hooks/useAuthContext";
 import LoadingSpinner from "../../components/Loading/LoadingSpinner";
 
 const DashBoard = () => {
-  const [list, setList] = useState("");
   const axiosPrivate = useAxiosPrivate();
   const { authState } = useAuthContext();
   const [loading, setLoading] = useState(false);
+  const [chatName, setChatName] = useState("");
 
-  /**
-   * @description Right now this axios call is just a test
-   * to test protected endpoints
-   */
+  const navigate = useNavigate();
+  const rooms = useGetRooms();
 
-  useEffect(() => {
-    setLoading(true);
-    axiosPrivate
-      .get("/auth/list")
-      .then((res) => {
-        const { data } = res;
-
-        const { list } = data;
-        setList(list);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
-  }, []);
+  const handleClick = (roomId, roomName) => {
+    setChatName(roomName);
+    navigate(`/chat/${roomId}`, { state: { roomName } });
+  };
 
   if (loading) return <LoadingSpinner />;
+
+  console.log(rooms);
   return (
     <div>
       <h1>Dashboard</h1>
-      <span>IF you can see this list, you are authorized.</span>
+      <span>List of chats.</span>
       <ul>
-        {list && list.map((item, i) => <li key={i}>{item}</li>)}
+        {rooms &&
+          rooms.map((item) => (
+            <li
+              key={item.roomId}
+              onClick={() => handleClick(item.roomId, item.roomName)}
+            >
+              {item.roomName}
+              {/*room 64f00e7a9a67ca3839b7c99d works*/}
+            </li>
+          ))}
       </ul>
     </div>
   );

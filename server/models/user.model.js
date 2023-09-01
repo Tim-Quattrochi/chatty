@@ -20,6 +20,19 @@ const userSchema = new mongoose.Schema(
       required: [true, "Please enter a password."],
       minlength: 8,
     },
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    chatRooms: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ChatRoom",
+      },
+    ],
+    activeSocket: String,
 
     refreshToken: {
       type: String,

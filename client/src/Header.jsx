@@ -39,10 +39,23 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              Hello, {authState.user.name}
-              <Link to="/" style={styles.navLink} onClick={handleLogout}>
-                Logout
-              </Link>
+              <NavLink
+                to="/chat"
+                style={styles.navLink}
+                activestyle={styles.activeNavLink}
+              >
+                Chat
+              </NavLink>
+              <>
+                Hello, {authState.user.name}
+                <Link
+                  to="/"
+                  style={styles.navLink}
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Link>
+              </>
             </>
           )}
         </li>
@@ -70,6 +83,12 @@ const styles = {
   },
   activeNavLink: {
     fontWeight: "bold",
+  },
+  chatLink: {
+    color: "#fff",
+    textDecoration: "none",
+    padding: "8px 16px",
+    marginLeft: "auto",
   },
 };
 
