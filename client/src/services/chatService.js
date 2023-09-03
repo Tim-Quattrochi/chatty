@@ -55,4 +55,8 @@ const setError = (error, chatDispatch) => {
   handleDispatch(chatDispatch, "SET_ERROR", error);
 };
 
-export { addChat, handleChange, loadChats, setError };
+const clearChatState = (chatDispatch) => {
+  handleDispatch(chatDispatch, "CLEAR_CHAT_STATE", null);
+};
+
+export { addChat, handleChange, loadChats, setError, clearChatState };

@@ -1,9 +1,16 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import useAuthContext from "./hooks/useAuthContext";
+import useChatContext from "./hooks/useChatContext";
 
 const Navbar = () => {
   const { authState, handleLogout } = useAuthContext();
+  const { handleClearChatState } = useChatContext();
+
+  const handleLogoutClick = () => {
+    handleLogout();
+    handleClearChatState();
+  };
 
   return (
     <nav style={styles.navbar}>
@@ -51,7 +58,7 @@ const Navbar = () => {
                 <Link
                   to="/"
                   style={styles.navLink}
-                  onClick={handleLogout}
+                  onClick={handleLogoutClick}
                 >
                   Logout
                 </Link>

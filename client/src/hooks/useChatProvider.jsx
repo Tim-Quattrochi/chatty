@@ -11,6 +11,7 @@ import {
   handleChange,
   loadChats,
   setError,
+  clearChatState,
 } from "../services/chatService";
 
 // eslint-disable-next-line react/prop-types
@@ -71,6 +72,10 @@ export const ChatProvider = ({ children }) => {
     setError(error, chatDispatch);
   };
 
+  const handleClearChatState = () => {
+    clearChatState(chatDispatch);
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -80,6 +85,7 @@ export const ChatProvider = ({ children }) => {
         handleInputChange,
         handleLoadChats,
         handleSetError,
+        handleClearChatState,
       }}
     >
       {children}

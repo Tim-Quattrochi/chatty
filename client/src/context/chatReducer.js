@@ -44,6 +44,9 @@ export const chatReducer = (state, action) => {
         isSubmitting: action.payload,
       };
 
+    case "CLEAR_CHAT_STATE":
+      return initialState;
+
     case "SET_ERROR":
       return {
         ...state,
