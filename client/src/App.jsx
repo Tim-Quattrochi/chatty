@@ -7,15 +7,12 @@ import DashBoard from "./pages/DashBoard/DashBoard";
 import PrivateRoute from "./components/PrivateRoute";
 import Header from "./Header";
 import useAuthContext from "./hooks/useAuthContext";
-import { useSocket } from "./hooks/useSocket";
-import Chat from "./components/Chat/Chat";
+
 import ChatRoom from "./components/ChatRoom/ChatRoom";
 function App() {
   const {
-    authState: { user },
+    authState: { user, isAuthenticated },
   } = useAuthContext();
-
-  //create rooms for users
 
   const [roomInput, setRoomInput] = useState("");
   const [error, setError] = useState(null);

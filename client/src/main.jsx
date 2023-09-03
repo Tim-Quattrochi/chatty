@@ -1,4 +1,5 @@
 import { AuthProvider } from "./hooks/useAuthProvider.jsx";
+import { ChatProvider } from "./hooks/useChatProvider.jsx";
 import { BrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
@@ -9,7 +10,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <AuthProvider>
       <SocketProvider>
-        <App />
+        <ChatProvider>
+          <App />
+        </ChatProvider>
       </SocketProvider>
     </AuthProvider>
   </BrowserRouter>

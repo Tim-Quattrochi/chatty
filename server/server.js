@@ -105,15 +105,13 @@ io.on("connection", (socket) => {
     socket.emit("connected", rooms);
   });
 
-  socket.on("joinRoom", async ({ name, othrUid, userId }) => {
-    console.log("OTHER USERS ID:", othrUid);
+  socket.on("joinRoom", async ({ roomName, otherUid, userId }) => {
     //check if the room exists
-
-    //if I use the other users id as the room id it will create two rooms essentially. I need to create only one room and add the users to it.
-
+    console.log(userId);
+    console.log(roomName);
     const update = {
-      $addToSet: othrUid
-        ? { members: [othrUid, userId] }
+      $addToSet: otherUid
+        ? { members: [otherUid, userId] }
         : { members: [userId] },
     };
 
@@ -124,7 +122,7 @@ io.on("connection", (socket) => {
     try {
       const room = await ChatRoom.findOneAndUpdate(
         {
-          roomName: name,
+          roomName,
         },
         update,
         options
