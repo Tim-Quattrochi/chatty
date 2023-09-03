@@ -19,7 +19,12 @@ export const chatReducer = (state, action) => {
     case "ADD_CHAT": {
       return {
         ...state,
-        chats: [...state.chats, action.payload],
+        //only add the chat to state if it is not already there.
+        chats: state.chats.some(
+          (chat) => chat.id === action.payload.id
+        )
+          ? state.chats
+          : [...state.chats, action.payload],
       };
     }
     case "LOAD_CHATS":
