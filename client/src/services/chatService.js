@@ -13,7 +13,6 @@ const addChat = async (
   navigate
 ) => {
   try {
-    console.log(socket);
     socket.emit("joinRoom", {
       roomName,
       otherUid,

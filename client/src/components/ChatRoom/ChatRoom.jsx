@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import useAuthContext from "../../hooks/useAuthContext";
+import useChatContext from "../../hooks/useChatContext";
 import "./chatRoom.css";
 import { useSocket } from "../../hooks/useSocket";
 import {
@@ -38,6 +39,11 @@ const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
   const {
     authState: { user, isAuthenticated },
   } = useAuthContext();
+  const {
+    chatState: { chats },
+
+    handleAddChat,
+  } = useChatContext();
 
   const roomName = state?.roomName || "Chat Room";
 
@@ -48,21 +54,7 @@ const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
    * @returns {void}
    */
   const handleJoinOrCreateRoom = (roomName, othrUid) => {
-    socket.emit("joinRoom", {
-      roomName,
-      othrUid,
-      userId: user._id,
-    });
-
-    socket.on("roomJoined", (room) => {
-      setRoomInput("");
-      navigate(
-        `/chat/${room._id}`,
-        { state: { roomName: roomName } } || {
-          state: { roomName: name },
-        }
-      );
-    });
+    handleAddChat(roomName, othrUid, user._id);
   };
 
   const handleChange = (e) => {
@@ -106,6 +98,9 @@ const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
           { from: user.from, body: user.body },
         ]);
       });
+      return () => {
+        socket.off("receive_message");
+      };
     }
   }, [isAuthenticated, messages]);
 

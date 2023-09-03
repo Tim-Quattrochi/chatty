@@ -30,7 +30,7 @@ export const ChatProvider = ({ children }) => {
    * @param {string} otherUid - the other user's id(optional)
    * @returns {void}
    */
-  const handleAddChat = async ({ roomName, otherUid, userId }) => {
+  const handleAddChat = async (roomName, otherUid, userId) => {
     try {
       //make sure socket is available before adding chat
 

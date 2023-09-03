@@ -19,9 +19,9 @@ const DashBoard = () => {
   } = useChatContext();
   const userId = authState.user._id;
 
-  const handleClick = (roomName, userId) => {
+  const handleClick = ({ roomName }) => {
     setChatName(roomName);
-    handleAddChat(roomName, userId);
+    handleAddChat(roomName, null, userId);
   };
 
   useEffect(() => {
@@ -37,10 +37,7 @@ const DashBoard = () => {
       <ul>
         {chats &&
           chats.map((item) => (
-            <li
-              key={item.roomId}
-              onClick={() => handleClick(item.roomName, userId)}
-            >
+            <li key={item.roomId} onClick={() => handleClick(item)}>
               {item.roomName}
             </li>
           ))}
