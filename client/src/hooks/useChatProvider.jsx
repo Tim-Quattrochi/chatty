@@ -23,7 +23,7 @@ export const ChatProvider = ({ children }) => {
 
   const navigate = useNavigate();
   const axios = useAxiosPrivate();
-  const { socket } = useSocket();
+  const socket = useSocket();
 
   /**
    * @description this function creates a chat room based on the user input. If the room doesn't exist, it creates it. If the other users id is provided, it adds them to the room.

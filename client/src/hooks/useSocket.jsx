@@ -11,7 +11,6 @@ const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
-  const [mutualRoom, setMutualRoom] = useState(null);
 
   const {
     authState: { isAuthenticated, user },
@@ -23,9 +22,7 @@ export const SocketProvider = ({ children }) => {
       newSocket.on("connected", () => {
         newSocket.emit("handshake", user._id);
       });
-      newSocket.on("chatCreated", (room) => {
-        setMutualRoom(room);
-      });
+
       setSocket(newSocket);
     }
 
@@ -37,7 +34,7 @@ export const SocketProvider = ({ children }) => {
   }, [isAuthenticated]);
 
   return (
-    <SocketContext.Provider value={{ socket, mutualRoom }}>
+    <SocketContext.Provider value={socket}>
       {children}
     </SocketContext.Provider>
   );
