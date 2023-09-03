@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from "react";
-import { ChatContext } from "../context/chatContext";
+import { ChatContext } from "./useChatContext";
 import { chatReducer, initialState } from "../context/chatReducer";
 import { useSocket } from "./useSocket";
 import { handleDispatch } from "../utils/authUtils";

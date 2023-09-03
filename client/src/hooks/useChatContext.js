@@ -1,12 +1,12 @@
-import { useContext } from "react";
-import { ChatContext } from "../context/chatContext";
+import { useContext, createContext } from "react";
 
+export const ChatContext = createContext({});
 /**
- * @description  Custom hook to Make it easier to access AuthContext.
+ * @description  Custom hook to Make it easier to access ChatContext.
  *  @returns {object}  The value of ChatContext
  */
-const useAuthContext = () => {
+const useChatContext = () => {
   return useContext(ChatContext);
 };
 
-export default useAuthContext;
+export default useChatContext;

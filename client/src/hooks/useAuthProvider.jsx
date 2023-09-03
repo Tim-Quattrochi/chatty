@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "./useAuthContext";
 import { authReducer, initialState } from "../context/AuthReducer";
 import { handleDispatch } from "../utils/authUtils";
 import { APP_NAME } from "../config/constants";
