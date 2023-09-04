@@ -1,9 +1,8 @@
-import { useEffect, useReducer, useState } from "react";
+import { useReducer } from "react";
 import { ChatContext } from "./useChatContext";
 import { chatReducer, initialState } from "../context/chatReducer";
 import { useSocket } from "./useSocket";
 import { handleDispatch } from "../utils/authUtils";
-import { APP_NAME } from "../config/constants";
 import useAxiosPrivate from "./useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
 import {
@@ -14,28 +13,28 @@ import {
   clearChatState,
 } from "../services/chatService";
 
-// eslint-disable-next-line react/prop-types
 export const ChatProvider = ({ children }) => {
   const [chatState, chatDispatch] = useReducer(
     chatReducer,
     initialState
   );
 
+  //hooks
   const navigate = useNavigate();
   const axios = useAxiosPrivate();
   const socket = useSocket();
 
   /**
-   * @description this function creates a chat room based on the user input. If the room doesn't exist, it creates it. If the other users id is provided, it adds them to the room.
-   * @param {string} room - the name of the room
-   * @param {string} otherUid - the other user's id(optional)
-   * @returns {void}
+   * @description Helper function that calls addChat from the chatService.
+   * @param {string} roomName - The room name that will be passed to addChat from the chatService, same as "room" parameter from addChat in the chatService.
+   * @param {string} otherUid - The other user's id that will be passed to addChat from the chatService, same as "otherUid" parameter from addChat in the chatService.
+   * @param {string} userId - The user's id that will be passed to addChat from the chatService, same as "userId" parameter from addChat in the chatService.
    */
-  const handleAddChat = async (roomName, otherUid, userId) => {
+  const handleAddChat = (roomName, otherUid, userId) => {
     try {
       //make sure socket is available before adding chat
 
-      await addChat(
+      addChat(
         roomName,
         chatDispatch,
         otherUid,
@@ -47,31 +46,46 @@ export const ChatProvider = ({ children }) => {
       console.log(error);
     }
   };
-
+  /**
+   * @description Helper function that calls handleChange from the chatService.
+   * @param {Event} e - the event object
+   */
   const handleInputChange = (e) => {
     handleChange(e, chatDispatch);
   };
 
+  /**
+   * @description Helper function that calls loadChats from the chatService and sets isSubmitting to false.
+   * @returns {void}
+   */
   const handleLoadChats = async () => {
-    handleDispatch(chatDispatch, "SET_IS_SUBMITTING", true);
     try {
       const getRooms = async () => {
         const { data } = await axios.get("/chat/all");
 
         loadChats(data, chatDispatch);
+
         return data;
       };
-      handleDispatch(chatDispatch, "SET_IS_SUBMITTING", false);
+
       await getRooms();
+      handleDispatch(chatDispatch, "SET_IS_SUBMITTING", false);
     } catch (error) {
       console.log(error);
     }
   };
 
+  /**
+   *@description Helper function that calls setError from the chatService.
+   * @param {string} error - the error message that will be passed to setError from the chatService.
+   */
   const handleSetError = (error) => {
     setError(error, chatDispatch);
   };
 
+  /**
+   * @description Helper function that calls clearChatState from the chatService.
+   */
   const handleClearChatState = () => {
     clearChatState(chatDispatch);
   };
