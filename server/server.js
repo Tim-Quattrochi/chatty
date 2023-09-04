@@ -75,7 +75,6 @@ io.on("connection", (socket) => {
       if (room && room.messages.length > 0) {
         socket.emit("messagesLoaded", room.messages);
       } else if (room && room.messages.length === 0) {
-        console.log(room.messages);
         socket.emit("messagesLoaded", "no messages yet");
         return;
       }
@@ -106,9 +105,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("joinRoom", async ({ roomName, otherUid, userId }) => {
-    //check if the room exists
-    console.log(userId);
-    console.log(roomName);
     const update = {
       $addToSet: otherUid
         ? { members: [otherUid, userId] }
@@ -142,7 +138,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("createChatRoom", async (members) => {
-    console.log("MEMBERS", members);
     const newRoom = await ChatRoom.create({ members });
     const users = await User.find({ _id: { $in: members } });
 
@@ -166,21 +161,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("typing", async ({ sender, roomId }) => {
-    console.log(sender);
     const room = await ChatRoom.findById(roomId).populate("members");
-    console.log(room);
-    for (let user of room.members) {
-      console.log(user.activeSocket);
-      // if (user.name !== sender) {
 
+    for (let user of room.members) {
       socket.to(user.activeSocket).emit("otherUserTyping", sender);
-      // }
     }
   });
 
   socket.on("send_message", async ({ body, from, roomId }) => {
-    console.log("message received from", from);
-
     const user = await User.findById(from);
     const messageData = {
       from: user.name,
