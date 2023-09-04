@@ -11,21 +11,27 @@ import {
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import useGetUsers from "../../hooks/useGetUsers";
 import Input from "../Input/Input";
+import aimSound from "../../assets/sounds/aimSound.mp3";
 import ChatSideBar from "../ChatSideBar/ChatSideBar";
 import { formatDate } from "../../utils/formatDate";
+import LoadingSpinner from "../Loading/LoadingSpinner";
+import CreateChat from "../CreatChat/CreateChat";
 
 const initialMsg = [
   {
+    _id: 4567333,
     from: { _id: 66978, name: "Chatty Bot" },
     body: "It's quiet in here...",
   },
 ];
 
+const audio = new Audio(aimSound);
+audio.preload = "auto";
+
 const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const [timeSinceTyping, setTimeSinceTyping] = useState(5);
-  const [error, setError] = useState(null);
   const [userTyping, setUserTyping] = useState(null);
 
   const endOfMessages = useRef(null);
@@ -35,13 +41,13 @@ const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { socket, mutualRoom } = useSocket();
+  const socket = useSocket();
   const {
     authState: { user, isAuthenticated },
   } = useAuthContext();
   const {
-    chatState: { chats },
-
+    chatState: { chats, isSubmitting, error },
+    handleSetError,
     handleAddChat,
   } = useChatContext();
 
@@ -54,7 +60,12 @@ const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
    * @returns {void}
    */
   const handleJoinOrCreateRoom = (roomName, othrUid) => {
+    if (!roomName) {
+      handleSetError("Please enter a room name");
+      return;
+    }
     handleAddChat(roomName, othrUid, user._id);
+    setRoomInput("");
   };
 
   const handleChange = (e) => {
@@ -66,7 +77,7 @@ const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
   };
 
   const scrollToBottomOfMsgs = () => {
-    endOfMessages.current.scrollIntoView();
+    endOfMessages.current?.scrollIntoView();
   };
 
   useEffect(() => {
@@ -86,6 +97,10 @@ const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
           setMessages(messages);
         }
       });
+
+      return () => {
+        socket.off("messagesLoaded");
+      };
     }
   }, [socket, roomId, isAuthenticated]);
 
@@ -93,6 +108,7 @@ const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
     //listens for messages from the server and sets them in state.
     if (socket && isAuthenticated) {
       socket.on("receive_message", (user) => {
+        audio.play();
         setMessages((prevMsgs) => [
           ...prevMsgs,
           { from: user.from, body: user.body },
@@ -102,7 +118,7 @@ const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
         socket.off("receive_message");
       };
     }
-  }, [isAuthenticated, messages]);
+  }, [socket, isAuthenticated, messages]);
 
   useEffect(() => {
     if (socket && isAuthenticated) {
@@ -126,13 +142,13 @@ const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
     if (socket) {
       socket.on("error", (error) => {
         console.log(error);
-        setError(error);
+        handleSetError(error);
       });
     }
     //clear the error after 5 seconds
     return () => {
       setTimeout(() => {
-        setError(null);
+        handleSetError(null);
       }, 5000);
     };
   }, [socket, error]);
@@ -155,27 +171,22 @@ const ChatRoom = ({ userId, roomInput, setRoomInput }) => {
       roomId,
     });
     setMessageInput("");
+    setMessages((prevMsgs) => [
+      ...prevMsgs,
+      { from: user, body: messageInput },
+    ]);
   };
 
-  // useEffect(() => {
-  //   const audio = new Audio("./sounds/aimSound.mp3");
-  //   audio.play();
-  // }, [messages]);
+  if (isSubmitting) return <LoadingSpinner />;
 
   return (
     <>
       <>
-        <div className="create-room">
-          <input
-            type="text"
-            value={roomInput}
-            onChange={(e) => setRoomInput(e.target.value)}
-            placeholder="Create a room"
-          />
-          <button onClick={() => handleJoinOrCreateRoom(roomInput)}>
-            Create
-          </button>
-        </div>
+        <CreateChat
+          handleChange={(e) => setRoomInput(e.target.value)}
+          roomInput={roomInput}
+          handleJoinOrCreateRoom={handleJoinOrCreateRoom}
+        />
 
         <h1 className="chat-name">{roomName}</h1>
 

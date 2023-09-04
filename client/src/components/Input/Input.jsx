@@ -8,6 +8,7 @@ const Input = ({
   value,
   type,
   name,
+  onClick,
 }) => {
   return (
     <input
@@ -17,6 +18,7 @@ const Input = ({
       onChange={handleChange}
       placeholder={placeholder}
       value={value}
+      onClick={onClick ? onClick : null}
     />
   );
 };
